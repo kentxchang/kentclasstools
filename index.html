@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阿剛老師的剛好系列：課堂互動魔法工具箱</title>
+    <meta name="description" content="阿剛老師開發的課堂互動工具集：剛好學、剛好測、剛好白板、剛好簡報。免上傳HTML，Firebase雲端整合，師生互動更簡單！">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Varela+Round&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Anime.js for smooth animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Varela Round', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* 自定義漸層文字 */
+        .text-gradient {
+            background: linear-gradient(135deg, #2563eb, #db2777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 卡片懸浮效果 */
+        .tool-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* 背景裝飾 */
+        .blob {
+            position: absolute;
+            filter: blur(40px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: float 10s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* 剛好學色系 */
+        .theme-learn { --primary: #ec4899; --light: #fce7f3; }
+        /* 剛好測色系 */
+        .theme-quiz { --primary: #3b82f6; --light: #dbeafe; }
+        /* 剛好白板色系 */
+        .theme-board { --primary: #f59e0b; --light: #fef3c7; }
+        /* 剛好簡報色系 */
+        .theme-slides { --primary: #8b5cf6; --light: #ede9fe; }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative">
+
+    <!-- 背景裝飾動畫 -->
+    <div class="blob bg-pink-300 w-64 h-64 rounded-full top-0 left-0 mix-blend-multiply"></div>
+    <div class="blob bg-purple-300 w-72 h-72 rounded-full top-0 right-0 mix-blend-multiply animation-delay-2000"></div>
+    <div class="blob bg-blue-300 w-80 h-80 rounded-full bottom-0 left-20 mix-blend-multiply animation-delay-4000"></div>
+
+    <!-- Header Section -->
+    <header class="w-full pt-16 pb-8 px-4 text-center">
+        <div class="max-w-4xl mx-auto">
+            <div class="inline-block mb-4 px-4 py-1.5 rounded-full bg-indigo-100 text-indigo-700 font-bold text-sm tracking-wide shadow-sm border border-indigo-200">
+                ✨ 2025 全新升級版本 ✨
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-slate-800 mb-6 leading-tight">
+                阿剛老師的<br>
+                <span class="text-gradient">剛好系列</span>：課堂互動魔法工具箱
+            </h1>
+            <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed mb-8">
+                將所有工具介面統一，告別繁瑣的 HTML 上傳！<br>
+                <span class="font-bold text-slate-800 bg-yellow-100 px-1">老師只需申請 Firebase</span>，填入網頁即可生成專屬網址，師生同步互動超簡單！
+            </p>
+            
+            <!-- 加入 Hero Image -->
+            <div class="mt-8 mb-4 transform hover:scale-[1.01] transition-transform duration-500">
+                <img src="hero-image.jpg" alt="剛好系列介紹圖" class="w-full max-w-4xl mx-auto rounded-3xl shadow-2xl border-4 border-white/50 backdrop-blur-sm">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content: Tools Grid -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 py-8 mb-16">
+        
+        <!-- 卡片網格 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            <!-- 1. 剛好學 -->
+            <div class="tool-card bg-white rounded-3xl p-6 border border-slate-100 shadow-lg flex flex-col h-full relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-pink-50 rounded-bl-full -mr-8 -mt-8 z-0 transition group-hover:scale-110"></div>
+                
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="w-16 h-16 rounded-2xl bg-pink-100 text-pink-500 flex items-center justify-center text-3xl mb-4 shadow-sm">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">1. 剛好學</h2>
+                    <div class="h-1 w-12 bg-pink-500 rounded-full mb-4"></div>
+                    <p class="text-slate-500 mb-6 flex-grow">
+                        課堂即時派送互動任務工具。即時派送任務、互動學習，師生進度同步掌握。
+                    </p>
+                    <div class="space-y-3">
+                        <a href="https://kentxchang.github.io/classtool-share/" target="_blank" class="block w-full py-3 px-4 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-xl text-center transition shadow-md hover:shadow-lg transform active:scale-95">
+                            進入剛好學 <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 剛好測 -->
+            <div class="tool-card bg-white rounded-3xl p-6 border border-slate-100 shadow-lg flex flex-col h-full relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 z-0 transition group-hover:scale-110"></div>
+                
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-500 flex items-center justify-center text-3xl mb-4 shadow-sm">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">2. 剛好測</h2>
+                    <div class="h-1 w-12 bg-blue-500 rounded-full mb-4"></div>
+                    <p class="text-slate-500 mb-6 flex-grow">
+                        AI 生成題庫的即時測驗工具。Firebase 支援，即時統計成績，測驗變得更聰明。
+                    </p>
+                    <div class="space-y-3">
+                        <a href="https://kentxchang.github.io/aiquiztools/" target="_blank" class="block w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl text-center transition shadow-md hover:shadow-lg transform active:scale-95">
+                            進入剛好測 <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 剛好白板 -->
+            <div class="tool-card bg-white rounded-3xl p-6 border border-slate-100 shadow-lg flex flex-col h-full relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -mr-8 -mt-8 z-0 transition group-hover:scale-110"></div>
+                
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-500 flex items-center justify-center text-3xl mb-4 shadow-sm">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">3. 剛好白板</h2>
+                    <div class="h-1 w-12 bg-amber-500 rounded-full mb-4"></div>
+                    <p class="text-slate-500 mb-6 flex-grow">
+                        課堂共編白板。創意討論、即時協作，支援師生共用畫布，創意不設限。
+                    </p>
+                    <div class="space-y-3">
+                        <a href="https://kentxchang.github.io/shareppt/" target="_blank" class="block w-full py-3 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-center transition shadow-md hover:shadow-lg transform active:scale-95">
+                            進入剛好白板 <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 剛好簡報 -->
+            <div class="tool-card bg-white rounded-3xl p-6 border border-slate-100 shadow-lg flex flex-col h-full relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-violet-50 rounded-bl-full -mr-8 -mt-8 z-0 transition group-hover:scale-110"></div>
+                
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="w-16 h-16 rounded-2xl bg-violet-100 text-violet-500 flex items-center justify-center text-3xl mb-4 shadow-sm">
+                        <i class="fa-solid fa-presentation-screen"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">4. 剛好簡報</h2>
+                    <div class="h-1 w-12 bg-violet-500 rounded-full mb-4"></div>
+                    <p class="text-slate-500 mb-6 flex-grow">
+                        同步簡報工具。老師邊簡報、邊派送任務給學生，實現真正的互動教學。
+                    </p>
+                    <div class="space-y-3">
+                        <!-- 假設連結，請替換為實際連結 -->
+                        <a href="#" onclick="alert('請確認剛好簡報的 GitHub Pages 連結並更新此處'); return false;" class="block w-full py-3 px-4 bg-violet-500 hover:bg-violet-600 text-white font-bold rounded-xl text-center transition shadow-md hover:shadow-lg transform active:scale-95">
+                            進入剛好簡報 <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 功能特色區塊 -->
+        <div class="mt-20 bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-slate-100">
+            <div class="text-center mb-10">
+                <h3 class="text-3xl font-bold text-slate-800 mb-4">為什麼選擇剛好系列？</h3>
+                <p class="text-slate-500">專為第一線教師設計，解決課堂數位互動的痛點</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center text-green-600 text-2xl mb-4">
+                        <i class="fa-solid fa-cloud"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-2">免上傳 HTML</h4>
+                    <p class="text-slate-500 text-sm">只要申請 Firebase，填入設定碼即可生成專用網址，無需架設伺服器。</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 mx-auto bg-orange-100 rounded-full flex items-center justify-center text-orange-600 text-2xl mb-4">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-2">即時同步互動</h4>
+                    <p class="text-slate-500 text-sm">利用 Firestore 強大的即時資料庫，師生畫面秒同步，互動零時差。</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="w-16 h-16 mx-auto bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-2xl mb-4">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-2">跨載具支援</h4>
+                    <p class="text-slate-500 text-sm">平板、手機、電腦通通支援，介面統一，操作直覺好上手。</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-slate-600 mb-2">Made with <i class="fa-solid fa-heart text-red-500 mx-1"></i> by <a href="#" class="font-bold text-indigo-600 hover:underline">阿剛老師</a></p>
+            <p class="text-xs text-slate-400">
+                本作品採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh_TW" target="_blank" class="hover:text-indigo-500 underline">CC BY-NC-SA 4.0 創用CC授權</a><br>
+                歡迎非商業用途轉載、引用或改編，請保留「阿剛老師」署名。
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // 簡單的入場動畫
+        document.addEventListener('DOMContentLoaded', () => {
+            anime({
+                targets: 'header',
+                opacity: [0, 1],
+                translateY: [-20, 0],
+                easing: 'easeOutExpo',
+                duration: 1000
+            });
+
+            anime({
+                targets: '.tool-card',
+                opacity: [0, 1],
+                translateY: [50, 0],
+                delay: anime.stagger(100),
+                easing: 'easeOutExpo',
+                duration: 1200
+            });
+        });
+    </script>
+</body>
+</html>
