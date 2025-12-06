@@ -57,6 +57,44 @@
             66% { transform: translate(-20px, 20px) scale(0.9); }
             100% { transform: translate(0, 0) scale(1); }
         }
+        
+        /* Modal Custom Styles */
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            overflow-x: auto;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.2s;
+        }
+        .copy-btn:hover { background-color: #2563eb; }
+        .step-number {
+            background-color: #3b82f6;
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative">
@@ -80,6 +118,12 @@
                 將所有工具介面統一，告別繁瑣的 HTML 上傳！<br>
                 <span class="font-bold text-slate-800 bg-yellow-100 px-1">老師只需申請 Firebase</span>，填入網頁即可生成專屬網址，師生同步互動超簡單！
             </p>
+
+            <!-- 新增按鈕：開啟設定教學 -->
+            <button id="open-setup-modal-btn" class="mb-4 inline-flex items-center px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-full transition-all shadow-lg shadow-violet-300 transform hover:scale-[1.03]">
+                <i class="fa-solid fa-graduation-cap mr-3"></i>
+                點此查看 Firebase 設定教學
+            </button>
             
             <!-- Hero Image: 確保 hero-image.jpg 在同目錄下 -->
             <div class="mt-8 mb-4 transform hover:scale-[1.01] transition-transform duration-500">
@@ -150,7 +194,6 @@
                         課堂共編白板。創意討論、即時協作，支援師生共用畫布，創意不設限。
                     </p>
                     <div class="space-y-3">
-                        <!-- 連結已更新為: https://kentxchang.github.io/whiteboard-share/ -->
                         <a href="https://kentxchang.github.io/whiteboard-share/" target="_blank" class="block w-full py-3 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-center transition shadow-md hover:shadow-lg transform active:scale-95">
                             進入剛好白板 <i class="fa-solid fa-arrow-right ml-2"></i>
                         </a>
@@ -226,9 +269,242 @@
         </div>
     </footer>
 
+    <!-- Firebase Setup Modal (Teaching Content) -->
+    <div id="setup-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] overflow-y-auto relative">
+             <div class="max-w-4xl mx-auto p-6">
+                <header class="text-center mb-6 pt-4">
+                    <button id="close-setup-modal-btn" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 text-4xl font-bold leading-none">&times;</button>
+                    <h1 class="text-3xl font-bold text-slate-800 mb-2">🔥 Firebase 通用專案設定教學</h1>
+                    <p class="text-lg text-slate-600">你需要建立 **兩個** 專案：一個給通用工具，一個給「剛好測」</p>
+                    <div class="mt-4 inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full font-bold text-sm">
+                        <i class="fas fa-check-circle mr-1"></i> 已包含 100 年免維護設定方案
+                    </div>
+                </header>
+                
+                <h3 class="text-2xl font-bold text-indigo-700 mb-4 border-b pb-2 border-indigo-200">
+                    第一部分：通用專案設定 (剛好學, 白板, 簡報)
+                </h3>
+
+                <!-- Step 1-3 are identical -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+                    <div class="flex items-start gap-4">
+                        <div class="step-number">1-3</div>
+                        <div class="flex-1">
+                            <h2 class="text-xl font-bold mb-3">建立專案、開啟匿名登入、建立資料庫</h2>
+                            <p class="text-slate-600 mb-2">
+                                請依照 **「建立專案」、「開啟匿名登入 (Authentication)」** 和 **「建立資料庫 (Firestore)」** 的步驟操作。
+                            </p>
+                            <div class="mt-4 p-3 bg-gray-50 rounded-lg border text-sm text-gray-700">
+                                <span class="font-bold">專案名稱建議：</span> <code>Universal-Tools</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 for Universal Project -->
+                <div class="bg-white rounded-2xl shadow-sm border-2 border-indigo-200 p-6 mb-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs px-2 py-1 rounded-bl-lg">通用專案規則</div>
+                    <div class="flex items-start gap-4">
+                        <div class="step-number bg-indigo-500">4</div>
+                        <div class="flex-1">
+                            <h2 class="text-xl font-bold mb-3 text-indigo-700">設定 100 年有效期的安全性規則 (通用工具)</h2>
+                            <p class="text-slate-600 mb-4">
+                                這是給 **剛好學、剛好白板、剛好簡報** 專用的規則，可讓資料在 2125 年前都能讀寫，無需每年更改。
+                            </p>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyRules(this, 'universal')">複製通用代碼</button>
+                                <pre id="rules-code-universal"><code>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 匹配資料庫中的任何文件路徑
+    match /{document=**} {
+      // 允許讀取和寫入，條件是：當前時間小於 2125 年 1 月 1 日
+      allow read, write: if request.time < timestamp.date(2125, 1, 1);
+    }
+  }
+}</code></pre>
+                            </div>
+                            <div class="mt-4 text-right">
+                                <p class="text-slate-500 text-sm mb-2">貼上後，請點擊：</p>
+                                <button class="bg-indigo-600 text-white px-4 py-1 rounded shadow cursor-default">發布 (Publish)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 class="text-2xl font-bold text-red-700 mb-4 border-b pb-2 border-red-200 mt-10">
+                    第二部分：剛好測專案設定 (必需單獨申請)
+                </h3>
+                
+                <div class="bg-red-50 rounded-2xl shadow-sm border-2 border-red-200 p-6 mb-6">
+                    <div class="flex items-start gap-4">
+                        <div class="step-number bg-red-600">A</div>
+                        <div class="flex-1">
+                            <h2 class="text-xl font-bold mb-3 text-red-700">建立第二個專案（剛好測）</h2>
+                            <p class="text-slate-600 mb-2">
+                                <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i> **重要：** 由於剛好測的資料（題庫、成績）需永久保存，我們必須將它與其他工具分開。
+                            </p>
+                            <p class="text-slate-600 mb-2 font-bold">
+                                請重複步驟 1-3：**「建立專案」、「開啟匿名登入」** 和 **「建立資料庫」**。
+                            </p>
+                            <div class="mt-4 p-3 bg-gray-50 rounded-lg border text-sm text-gray-700">
+                                <span class="font-bold">專案名稱建議：</span> <code>Quiz-Database</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step B for Quiz Project -->
+                <div class="bg-white rounded-2xl shadow-sm border-2 border-red-200 p-6 mb-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 rounded-bl-lg">剛好測專用規則</div>
+                    <div class="flex items-start gap-4">
+                        <div class="step-number bg-red-500">B</div>
+                        <div class="flex-1">
+                            <h2 class="text-xl font-bold mb-3 text-red-700">設定剛好測的安全性規則</h2>
+                            <p class="text-slate-600 mb-4">
+                                這是專為 **剛好測** 的資料結構設計的規則，確保老師可管理題庫、學生可匿名作答與讀取成績。
+                            </p>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyRules(this, 'quiz')">複製剛好測代碼</button>
+                                <pre id="rules-code-quiz"><code>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 匹配資料庫中的任何文件路徑
+    match /{document=**} {
+      // 允許讀取和寫入，條件是：當前時間小於 2125 年 1 月 1 日
+      // (所有資料都設為 100 年效期，無需擔心過期)
+      allow read, write: if request.time < timestamp.date(2125, 1, 1);
+    }
+  }
+}</code></pre>
+                            </div>
+                            <p class="mt-2 text-sm text-slate-500">
+                                **提示：** 雖然剛好測有特殊的資料結構，但由於我們讓所有使用者都能讀寫，所以可以直接沿用與通用專案相同的 100 年通用規則，**設定方式完全相同**。請同樣貼上 **步驟 4** 的代碼即可。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-green-700 mb-4 border-b pb-2 border-green-200 mt-10">
+                    第三部分：取得設定碼與應用
+                </h3>
+
+                <!-- Step 5 (Original Step 5) -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+                    <div class="flex items-start gap-4">
+                        <div class="step-number">5</div>
+                        <div class="flex-1">
+                            <h2 class="text-xl font-bold mb-3">取得設定碼 (Config)</h2>
+                            <p class="text-slate-600 mb-2">
+                                從 **通用專案** 和 **剛好測專案** 分別執行 Web 應用程式註冊（步驟 5），並複製大括號 <code>{</code> 到 <code>}</code> 中間的內容。
+                            </p>
+                            <div class="mt-4 bg-gray-100 p-4 rounded-lg border border-gray-300">
+                                <p class="font-bold text-gray-700 mb-2">您需要複製的內容範例：</p>
+                                <pre class="text-xs text-gray-600 overflow-x-auto">
+apiKey: "AIzaSyD...",
+authDomain: "your-project.firebaseapp.com",
+projectId: "your-project",
+storageBucket: "your-project.appspot.com",
+messagingSenderId: "123456...",
+appId: "1:123456..."</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6 (Original Step 6) -->
+                <div class="bg-green-50 rounded-2xl shadow-sm border border-green-200 p-6 mb-6">
+                    <div class="flex items-start gap-4">
+                        <div class="step-number bg-green-600"><i class="fas fa-check"></i></div>
+                        <div class="flex-1">
+                            <h2 class="text-xl font-bold mb-3 text-green-800">應用到對應的程式中</h2>
+                            <p class="text-green-700 mb-4 font-bold">
+                                根據程式的性質，貼上對應的設定碼：
+                            </p>
+                            <ul class="list-disc list-inside space-y-3 text-slate-700">
+                                <li>
+                                    <strong>剛好測（aiquiztools）</strong>：<br>
+                                    貼上 **剛好測專案** 的設定碼。
+                                </li>
+                                <li class="font-bold text-indigo-700">
+                                    <strong>剛好學、剛好白板、剛好簡報</strong>：<br>
+                                    貼上 **通用專案** 的設定碼。
+                                </li>
+                            </ul>
+                            <p class="mt-4 text-sm text-slate-500">
+                                <i class="fas fa-info-circle mr-1"></i> 點擊各程式右上角的 **「Firebase 設定」** 或 **「設定 (齒輪)」** 按鈕即可貼上並套用。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="py-4 text-center">
+                    <button id="close-setup-modal-bottom-btn" class="px-8 py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition shadow-lg">
+                        關閉教學
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 簡單的入場動畫
+        // --- Modal Scripts ---
+        const setupModal = document.getElementById('setup-modal');
+        const openSetupModalBtn = document.getElementById('open-setup-modal-btn');
+        const closeSetupModalBtn = document.getElementById('close-setup-modal-btn');
+        const closeSetupModalBottomBtn = document.getElementById('close-setup-modal-bottom-btn');
+
+        function openModal() {
+            setupModal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            setupModal.classList.add('hidden');
+        }
+
+        function copyRules(button, type) {
+            let rulesCode;
+            if (type === 'universal') {
+                rulesCode = document.getElementById('rules-code-universal').innerText;
+            } else if (type === 'quiz') {
+                // Since the rule is the same, we just use the universal one.
+                rulesCode = document.getElementById('rules-code-quiz').innerText;
+            } else {
+                return;
+            }
+
+            navigator.clipboard.writeText(rulesCode).then(() => {
+                const originalText = button.innerText;
+                button.innerText = '已複製！';
+                button.style.backgroundColor = '#16a34a';
+                setTimeout(() => {
+                    button.innerText = originalText;
+                    button.style.backgroundColor = '#3b82f6';
+                }, 2000);
+            });
+        }
+        
+        // --- Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Open Modal
+            if(openSetupModalBtn) openSetupModalBtn.addEventListener('click', openModal);
+            
+            // Close Modal
+            if(closeSetupModalBtn) closeSetupModalBtn.addEventListener('click', closeModal);
+            if(closeSetupModalBottomBtn) closeSetupModalBottomBtn.addEventListener('click', closeModal);
+            
+            // Close Modal when clicking backdrop
+            setupModal.addEventListener('click', (e) => {
+                if (e.target === setupModal) {
+                    closeModal();
+                }
+            });
+            
+            // Attach copy function globally or directly to button (as done above)
+            window.copyRules = copyRules;
+
+            // Simple entrance animation
             anime({
                 targets: 'header',
                 opacity: [0, 1],
