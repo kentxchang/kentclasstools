@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>阿剛老師的剛好系列：課堂互動魔法工具箱</title>
     <meta name="description" content="阿剛老師開發的課堂互動工具集：剛好學、剛好測、剛好白板、剛好簡報。免上傳HTML，Firebase雲端整合，師生互動更簡單！">
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Varela+Round&display=swap" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -57,7 +57,7 @@
             66% { transform: translate(-20px, 20px) scale(0.9); }
             100% { transform: translate(0, 0) scale(1); }
         }
-        
+
         /* Modal Custom Styles */
         .code-block {
             background-color: #1e293b;
@@ -124,7 +124,7 @@
                 <i class="fa-solid fa-graduation-cap mr-3"></i>
                 點此查看 Firebase 設定教學
             </button>
-            
+
             <!-- Hero Image: 確保 hero-image.jpg 在同目錄下 -->
             <div class="mt-8 mb-4 transform hover:scale-[1.01] transition-transform duration-500">
                 <img src="hero-image.jpg" alt="剛好系列介紹圖" class="w-full max-w-4xl mx-auto rounded-3xl shadow-2xl border-4 border-white/50 backdrop-blur-sm">
@@ -134,14 +134,14 @@
 
     <!-- Main Content: Tools Grid -->
     <main class="flex-grow w-full max-w-7xl mx-auto px-4 py-8 mb-16">
-        
+
         <!-- 卡片網格 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 
             <!-- 1. 剛好學 -->
             <div class="tool-card bg-white rounded-3xl p-6 border border-slate-100 shadow-lg flex flex-col h-full relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-pink-50 rounded-bl-full -mr-8 -mt-8 z-0 transition group-hover:scale-110"></div>
-                
+
                 <div class="relative z-10 flex flex-col h-full">
                     <div class="w-16 h-16 rounded-2xl bg-pink-100 text-pink-500 flex items-center justify-center text-3xl mb-4 shadow-sm">
                         <i class="fa-solid fa-list-check"></i>
@@ -162,7 +162,7 @@
             <!-- 2. 剛好測 -->
             <div class="tool-card bg-white rounded-3xl p-6 border border-slate-100 shadow-lg flex flex-col h-full relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 z-0 transition group-hover:scale-110"></div>
-                
+
                 <div class="relative z-10 flex flex-col h-full">
                     <div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-500 flex items-center justify-center text-3xl mb-4 shadow-sm">
                         <i class="fa-solid fa-circle-question"></i>
@@ -183,7 +183,7 @@
             <!-- 3. 剛好白板 -->
             <div class="tool-card bg-white rounded-3xl p-6 border border-slate-100 shadow-lg flex flex-col h-full relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -mr-8 -mt-8 z-0 transition group-hover:scale-110"></div>
-                
+
                 <div class="relative z-10 flex flex-col h-full">
                     <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-500 flex items-center justify-center text-3xl mb-4 shadow-sm">
                         <i class="fa-solid fa-pen-to-square"></i>
@@ -204,7 +204,7 @@
             <!-- 4. 剛好簡報 -->
             <div class="tool-card bg-white rounded-3xl p-6 border border-slate-100 shadow-lg flex flex-col h-full relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-violet-50 rounded-bl-full -mr-8 -mt-8 z-0 transition group-hover:scale-110"></div>
-                
+
                 <div class="relative z-10 flex flex-col h-full">
                     <div class="w-16 h-16 rounded-2xl bg-violet-100 text-violet-500 flex items-center justify-center text-3xl mb-4 shadow-sm">
                         <i class="fa-solid fa-presentation-screen"></i>
@@ -230,7 +230,7 @@
                 <h3 class="text-3xl font-bold text-slate-800 mb-4">為什麼選擇剛好系列？</h3>
                 <p class="text-slate-500">專為第一線教師設計，解決課堂數位互動的痛點</p>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="text-center p-4">
                     <div class="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center text-green-600 text-2xl mb-4">
@@ -276,12 +276,12 @@
                 <header class="text-center mb-6 pt-4">
                     <button id="close-setup-modal-btn" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 text-4xl font-bold leading-none">&times;</button>
                     <h1 class="text-3xl font-bold text-slate-800 mb-2">🔥 Firebase 通用專案設定教學</h1>
-                    <p class="text-lg text-slate-600">你需要建立 **兩個** 專案：一個給通用工具，一個給「剛好測」</p>
+                    <p class="text-lg text-slate-600">你需要建立 <strong>兩個</strong> 專案：一個給通用工具，一個給「剛好測」</p>
                     <div class="mt-4 inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full font-bold text-sm">
                         <i class="fas fa-check-circle mr-1"></i> 已包含 100 年免維護設定方案
                     </div>
                 </header>
-                
+
                 <h3 class="text-2xl font-bold text-indigo-700 mb-4 border-b pb-2 border-indigo-200">
                     第一部分：通用專案設定 (剛好學, 白板, 簡報)
                 </h3>
@@ -293,7 +293,7 @@
                         <div class="flex-1">
                             <h2 class="text-xl font-bold mb-3">建立專案、開啟匿名登入、建立資料庫</h2>
                             <p class="text-slate-600 mb-2">
-                                請依照 **「建立專案」、「開啟匿名登入 (Authentication)」** 和 **「建立資料庫 (Firestore)」** 的步驟操作。
+                                請依照 <strong>「建立專案」、「開啟匿名登入 (Authentication)」</strong> 和 <strong>「建立資料庫 (Firestore)」</strong> 的步驟操作。
                             </p>
                             <div class="mt-4 p-3 bg-gray-50 rounded-lg border text-sm text-gray-700">
                                 <span class="font-bold">專案名稱建議：</span> <code>Universal-Tools</code>
@@ -310,7 +310,7 @@
                         <div class="flex-1">
                             <h2 class="text-xl font-bold mb-3 text-indigo-700">設定 100 年有效期的安全性規則 (通用工具)</h2>
                             <p class="text-slate-600 mb-4">
-                                這是給 **剛好學、剛好白板、剛好簡報** 專用的規則，可讓資料在 2125 年前都能讀寫，無需每年更改。
+                                這是給 <strong>剛好學、剛好白板、剛好簡報</strong> 專用的規則，可讓資料在 2125 年前都能讀寫，無需每年更改。
                             </p>
                             <div class="code-block">
                                 <button class="copy-btn" onclick="copyRules(this, 'universal')">複製通用代碼</button>
@@ -332,21 +332,21 @@ service cloud.firestore {
                         </div>
                     </div>
                 </div>
-                
+
                 <h3 class="text-2xl font-bold text-red-700 mb-4 border-b pb-2 border-red-200 mt-10">
                     第二部分：剛好測專案設定 (必需單獨申請)
                 </h3>
-                
+
                 <div class="bg-red-50 rounded-2xl shadow-sm border-2 border-red-200 p-6 mb-6">
                     <div class="flex items-start gap-4">
                         <div class="step-number bg-red-600">A</div>
                         <div class="flex-1">
                             <h2 class="text-xl font-bold mb-3 text-red-700">建立第二個專案（剛好測）</h2>
                             <p class="text-slate-600 mb-2">
-                                <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i> **重要：** 由於剛好測的資料（題庫、成績）需永久保存，我們必須將它與其他工具分開。
+                                <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i> <strong>重要：</strong> 由於剛好測的資料（題庫、成績）需永久保存，我們必須將它與其他工具分開。
                             </p>
                             <p class="text-slate-600 mb-2 font-bold">
-                                請重複步驟 1-3：**「建立專案」、「開啟匿名登入」** 和 **「建立資料庫」**。
+                                請重複步驟 1-3：<strong>「建立專案」、「開啟匿名登入」</strong> 和 <strong>「建立資料庫」</strong>。
                             </p>
                             <div class="mt-4 p-3 bg-gray-50 rounded-lg border text-sm text-gray-700">
                                 <span class="font-bold">專案名稱建議：</span> <code>Quiz-Database</code>
@@ -354,7 +354,7 @@ service cloud.firestore {
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Step B for Quiz Project -->
                 <div class="bg-white rounded-2xl shadow-sm border-2 border-red-200 p-6 mb-6 relative overflow-hidden">
                     <div class="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 rounded-bl-lg">剛好測專用規則</div>
@@ -363,7 +363,7 @@ service cloud.firestore {
                         <div class="flex-1">
                             <h2 class="text-xl font-bold mb-3 text-red-700">設定剛好測的安全性規則</h2>
                             <p class="text-slate-600 mb-4">
-                                這是專為 **剛好測** 的資料結構設計的規則，確保老師可管理題庫、學生可匿名作答與讀取成績。
+                                這是專為 <strong>剛好測</strong> 的資料結構設計的規則，確保老師可管理題庫、學生可匿名作答與讀取成績。
                             </p>
                             <div class="code-block">
                                 <button class="copy-btn" onclick="copyRules(this, 'quiz')">複製剛好測代碼</button>
@@ -380,7 +380,7 @@ service cloud.firestore {
 }</code></pre>
                             </div>
                             <p class="mt-2 text-sm text-slate-500">
-                                **提示：** 雖然剛好測有特殊的資料結構，但由於我們讓所有使用者都能讀寫，所以可以直接沿用與通用專案相同的 100 年通用規則，**設定方式完全相同**。請同樣貼上 **步驟 4** 的代碼即可。
+                                <strong>提示：</strong> 雖然剛好測有特殊的資料結構，但由於我們讓所有使用者都能讀寫，所以可以直接沿用與通用專案相同的 100 年通用規則，<strong>設定方式完全相同</strong>。請同樣貼上 <strong>步驟 4</strong> 的代碼即可。
                             </p>
                         </div>
                     </div>
@@ -390,55 +390,119 @@ service cloud.firestore {
                     第三部分：取得設定碼與應用
                 </h3>
 
-                <!-- Step 5 (Original Step 5) -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+                <!-- Step 5: New In-App Setup Method -->
+                <div class="bg-white rounded-2xl shadow-sm border-2 border-green-400 p-6 mb-6">
                     <div class="flex items-start gap-4">
-                        <div class="step-number">5</div>
+                        <div class="step-number bg-green-500">5 (新)</div>
                         <div class="flex-1">
-                            <h2 class="text-xl font-bold mb-3">取得設定碼 (Config)</h2>
-                            <p class="text-slate-600 mb-2">
-                                從 **通用專案** 和 **剛好測專案** 分別執行 Web 應用程式註冊（步驟 5），並複製大括號 <code>{</code> 到 <code>}</code> 中間的內容。
+                            <h2 class="text-xl font-bold mb-3 text-green-700">在主程式中設定 Firebase (推薦新方法！)</h2>
+                            <p class="text-slate-600 mb-4 font-bold">
+                                全新功能：現在您可以直接在主程式中完成 Firebase 設定，無需下載或編輯檔案！
                             </p>
-                            <div class="mt-4 bg-gray-100 p-4 rounded-lg border border-gray-300">
-                                <p class="font-bold text-gray-700 mb-2">您需要複製的內容範例：</p>
-                                <pre class="text-xs text-gray-600 overflow-x-auto">
-apiKey: "AIzaSyD...",
-authDomain: "your-project.firebaseapp.com",
-projectId: "your-project",
-storageBucket: "your-project.appspot.com",
-messagingSenderId: "123456...",
-appId: "1:123456..."</pre>
+
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <span class="text-lg font-bold text-green-600 mr-3 mt-1 flex-shrink-0">1.</span>
+                                    <div>
+                                        <p class="font-bold text-slate-800">開啟主程式並點擊按鈕</p>
+                                        <p class="text-slate-600">在瀏覽器中開啟「剛好系列主程式」，點擊首頁右上角找到 <strong>「Firebase 設定」</strong> 按鈕並點擊。</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="text-lg font-bold text-green-600 mr-3 mt-1 flex-shrink-0">2.</span>
+                                    <div>
+                                        <p class="font-bold text-slate-800">貼上 Firebase 設定值</p>
+                                        <p class="text-slate-600">將您從 Firebase 複製的六行 Config 內容（例如通用專案或剛好測專案的設定）貼到文字框中。</p>
+                                        <pre class="mt-2 text-xs text-gray-600 overflow-x-auto bg-gray-100 p-2 rounded">
+apiKey: "AIzaSy...",
+authDomain: "xxx.firebaseapp.com",
+...</pre>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="text-lg font-bold text-green-600 mr-3 mt-1 flex-shrink-0">3.</span>
+                                    <div>
+                                        <p class="font-bold text-slate-800">套用設定</p>
+                                        <p class="text-slate-600">點擊 <strong>「套用設定」</strong> 按鈕。系統會自動解析並儲存您的 Firebase 設定，頁面會重新載入，設定會儲存在瀏覽器的 <code>localStorage</code> 中。</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start border-t border-dashed pt-3">
+                                    <span class="text-lg font-bold text-purple-600 mr-3 mt-1 flex-shrink-0"><i class="fas fa-link"></i></span>
+                                    <div>
+                                        <p class="font-bold text-purple-800">生成異機專用網址（選用但推薦）</p>
+                                        <p class="text-slate-600">重新點擊 <strong>「Firebase 設定」</strong> 按鈕，然後點擊 <strong>「生成異機專用網址(可免再設定firebase)」</strong> 按鈕。</p>
+                                        <ul class="list-disc list-inside text-sm text-slate-500 mt-2">
+                                            <li>系統會生成含有您 Firebase 設定的網址，方便分享給學生或列印使用。</li>
+                                            <li>其他裝置開啟後會自動載入您的 Firebase 設定。</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-lg border border-yellow-300 text-sm">
+                                <span class="font-bold">注意事項：</span> 設定會儲存在瀏覽器的 <code>localStorage</code> 中。生成的短網址和 QR Code 包含您的 Firebase 設定資訊，請妥善保管。
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Step 6 (Original Step 6) -->
-                <div class="bg-green-50 rounded-2xl shadow-sm border border-green-200 p-6 mb-6">
+                <!-- Step 6: Old Setup Method -->
+                <div class="bg-gray-100 rounded-2xl shadow-sm border border-gray-300 p-6 mb-6">
                     <div class="flex items-start gap-4">
-                        <div class="step-number bg-green-600"><i class="fas fa-check"></i></div>
+                        <div class="step-number bg-gray-500">6 (舊)</div>
                         <div class="flex-1">
-                            <h2 class="text-xl font-bold mb-3 text-green-800">應用到對應的程式中</h2>
-                            <p class="text-green-700 mb-4 font-bold">
-                                根據程式的性質，貼上對應的設定碼：
+                            <h2 class="text-xl font-bold mb-3 text-gray-700">使用 Firebase 設定工具（舊方法）</h2>
+                            <p class="text-slate-600 mb-4">
+                                開啟剛好系列 <strong>Firebase設定工具.html</strong>，依照頁面指引貼上剛才取得的 <code>firebaseConfig</code> 並點選生成。
                             </p>
-                            <ul class="list-disc list-inside space-y-3 text-slate-700">
-                                <li>
-                                    <strong>剛好測（aiquiztools）</strong>：<br>
-                                    貼上 **剛好測專案** 的設定碼。
-                                </li>
-                                <li class="font-bold text-indigo-700">
-                                    <strong>剛好學、剛好白板、剛好簡報</strong>：<br>
-                                    貼上 **通用專案** 的設定碼。
-                                </li>
+                            <ul class="list-disc list-inside text-slate-600 space-y-2">
+                                <li>工具會自動產生整合好設定的「剛好系列主程式」HTML 檔。</li>
+                                <li>下載後即可上傳靜態網頁空間使用，如 GitHub Pages。</li>
+                                <li>**工具網址：** <a href="https://kentxchang.github.io/firebase-setup/" target="_blank" class="text-blue-500 hover:underline"><strong>點此開啟設定工具</strong></a></li>
                             </ul>
-                            <p class="mt-4 text-sm text-slate-500">
-                                <i class="fas fa-info-circle mr-1"></i> 點擊各程式右上角的 **「Firebase 設定」** 或 **「設定 (齒輪)」** 按鈕即可貼上並套用。
-                            </p>
                         </div>
                     </div>
                 </div>
-                
+
+                <!-- NEW SECTION: Upload with EzPage -->
+                <div class="mt-10 pt-4 border-t border-slate-300">
+                    <h3 class="text-2xl font-bold text-sky-700 mb-4 border-b pb-2 border-sky-200">
+                        第四部分：上傳您的主程式 (使用 EzPage)
+                    </h3>
+                    <div class="bg-sky-50 rounded-2xl shadow-sm border-2 border-sky-200 p-6 mb-6">
+                        <p class="text-sky-800 mb-4 font-bold">
+                            當您完成 Firebase 設定並透過 <strong>設定工具 (步驟 6)</strong> 生成最終的 HTML 檔案後，下一步就是將其發佈到網路上，讓學生可以存取。我們推薦使用 <strong>「EzPage」</strong> 這個工具，它能讓您輕鬆地將靜態網頁上傳到 GitHub Pages，無需繁瑣的 Git 指令。
+                        </p>
+
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="step-number bg-sky-600 mr-3 mt-1">1</div>
+                                <div>
+                                    <p class="font-bold text-slate-800">登入 EzPage 並授權</p>
+                                    <p class="text-slate-600">前往 <a href="https://gg90052.github.io/ezpage/" target="_blank" class="text-blue-500 hover:underline">EzPage 官方網站</a>，點擊「立即開始」。點選「新增帳號」，並選擇「使用 Google 帳號」進行登錄。過程中請同意授權 EzPage 存取您的 GitHub 帳號。</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="step-number bg-sky-600 mr-3 mt-1">2</div>
+                                <div>
+                                    <p class="font-bold text-slate-800">上傳 HTML 檔案並部署</p>
+                                    <p class="text-slate-600">登入後，將您使用「firebase設定工具」生成的 HTML 檔案，直接拖曳到 EzPage 頁面右側的檔案上傳區。設定一個 <strong>「專案名稱」</strong> (將成為網址的一部分)，然後按下 <strong>「部署 HTML」</strong>。</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="step-number bg-sky-600 mr-3 mt-1">3</div>
+                                <div>
+                                    <p class="font-bold text-slate-800">驗證與瀏覽網站</p>
+                                    <p class="text-slate-600">部署完成後，觀察專案列表，待 GitHub 倉庫的圖示變成綠色打勾時，表示網站已準備就緒。點擊 <strong>「查看網站」</strong>，即可開啟您剛上線的主程式！</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- END NEW SECTION -->
+
+
                 <div class="py-4 text-center">
                     <button id="close-setup-modal-bottom-btn" class="px-8 py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition shadow-lg">
                         關閉教學
@@ -474,7 +538,10 @@ appId: "1:123456..."</pre>
                 return;
             }
 
-            navigator.clipboard.writeText(rulesCode).then(() => {
+            // Clean up surrounding whitespace/comments to only copy the raw rules block
+            const cleanedRules = rulesCode.split('\n').filter(line => !line.trim().startsWith('//') && line.trim() !== '').join('\n');
+
+            navigator.clipboard.writeText(cleanedRules).then(() => {
                 const originalText = button.innerText;
                 button.innerText = '已複製！';
                 button.style.backgroundColor = '#16a34a';
@@ -484,23 +551,23 @@ appId: "1:123456..."</pre>
                 }, 2000);
             });
         }
-        
+
         // --- Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
             // Open Modal
             if(openSetupModalBtn) openSetupModalBtn.addEventListener('click', openModal);
-            
+
             // Close Modal
             if(closeSetupModalBtn) closeSetupModalBtn.addEventListener('click', closeModal);
             if(closeSetupModalBottomBtn) closeSetupModalBottomBtn.addEventListener('click', closeModal);
-            
+
             // Close Modal when clicking backdrop
             setupModal.addEventListener('click', (e) => {
                 if (e.target === setupModal) {
                     closeModal();
                 }
             });
-            
+
             // Attach copy function globally or directly to button (as done above)
             window.copyRules = copyRules;
 
