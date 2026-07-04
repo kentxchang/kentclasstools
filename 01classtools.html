@@ -2204,7 +2204,7 @@
                     <div class="mt-2 text-slate-400 text-sm">
                         Made with <i class="fas fa-heart text-pink-400 mx-1"></i> by <a
                             href="https://kentxchang.blogspot.tw" target="_blank" rel="noopener noreferrer"
-                            class="text-indigo-500 hover:text-indigo-600 font-bold hover:underline">阿剛老師 V6</a>
+                            class="text-indigo-500 hover:text-indigo-600 font-bold hover:underline">阿剛老師 V6.1</a>
                     </div>
                     <div class="mt-4 text-slate-500 text-xs max-w-2xl mx-auto px-4">
                         <p class="mb-2">
@@ -5919,7 +5919,11 @@ appId: &quot;...&quot;"></textarea>
                 // CTP：白板/簡報模式 → 開啟同步子系統（學生），其餘模式關閉之
                 if (currentRole !== 'teacher' && (newMode === 'whiteboard' || newMode === 'presentation')) {
                     currentInteractionMode = newMode;
-                    if (window.__CTP) window.__CTP.mountStudent(newMode);
+                    // CTP 子系統腳本可能還沒載入完成 (window.__CTP 尚未存在)，
+                    // 若此時放棄，老師之後翻頁不會再寫 control 文件，
+                    // 這位學生就會永遠停在等待畫面 (「有些學生沒有同步」)。
+                    // 因此改為等候子系統就緒後再掛載。
+                    mountCTPStudentWhenReady(newMode);
                     return;
                 } else if (window.__CTP && window.__CTP.cur) {
                     window.__CTP.close();
@@ -6044,6 +6048,26 @@ appId: &quot;...&quot;"></textarea>
                 // So, keep the student in waiting view or current view, and just show an error.
                 showMessage("無法接收老師指令，請檢查網路連線。", "error");
             });
+        }
+
+        /**
+         * (Student) 等 CTP 子系統 (同步白板/簡報) 載入完成後再掛載學生端畫面。
+         * 子系統腳本需從 CDN 載入 Firebase 模組，可能比 control 快照晚就緒。
+         */
+        function mountCTPStudentWhenReady(mode, attempt = 0) {
+            if (window.__CTP) {
+                window.__CTP.mountStudent(mode);
+                return;
+            }
+            if (attempt >= 100) {
+                console.warn('[Student] CTP 子系統載入逾時，無法掛載同步模式:', mode);
+                showMessage('同步模組載入逾時，請重新整理頁面。', 'error');
+                return;
+            }
+            setTimeout(() => {
+                // 等待期間老師可能已切換離開同步模式，屆時放棄掛載
+                if (currentInteractionMode === mode) mountCTPStudentWhenReady(mode, attempt + 1);
+            }, 200);
         }
 
         /**
@@ -6178,8 +6202,24 @@ appId: &quot;...&quot;"></textarea>
                 showMessage('回答已送出！', 'success');
             } catch (error) {
                 console.error("送出答案失敗:", error);
-                showMessage("送出答案失敗，請檢查網路連線。", "error");
+                const errMsg = String((error && error.message) || '');
+                if (errMsg.indexOf('longer than') !== -1 || errMsg.indexOf('maximum allowed size') !== -1 || errMsg.indexOf('1048487') !== -1) {
+                    showMessage("送出失敗：作品內容過大（超過資料庫單筆上限），請簡化內容後重試。", "error");
+                } else {
+                    showMessage("送出答案失敗，請檢查網路連線。", "error");
+                }
             }
+        }
+
+        /**
+         * 將各種形式的 timestamp (Firestore Timestamp / Date / 字串) 轉為毫秒數以便排序比較。
+         */
+        function getResponseTimeMs(t) {
+            if (!t) return 0;
+            if (typeof t.toMillis === 'function') return t.toMillis();
+            if (typeof t.seconds === 'number') return t.seconds * 1000;
+            const d = new Date(t);
+            return isNaN(d.getTime()) ? 0 : d.getTime();
         }
 
         /**
@@ -6257,18 +6297,23 @@ appId: &quot;...&quot;"></textarea>
                 });
 
                 // 【記錄學生的作答歷程】
-                updateClassroomHistoryResponses(responses);
+                // 重要：此時畫面已被清空 (container.innerHTML = '')，若這裡拋出例外
+                // (例如 localStorage 空間不足)，後面的卡片重建就不會執行，
+                // 教師端畫面會呈現空白 (學生回應「消失」)。因此必須獨立保護。
+                try {
+                    updateClassroomHistoryResponses(responses);
+                } catch (e) {
+                    console.warn('記錄作答歷程失敗（不影響畫面顯示）:', e);
+                }
 
                 // Apply sorting
                 if (responsesSortMethod === 'name') {
-                    responses.sort((a, b) => a.name.localeCompare(b.name, 'zh-TW'));
+                    responses.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'zh-TW'));
                 } else {
                     // Sort by timestamp (most recent first) - default
-                    responses.sort((a, b) => {
-                        const timeA = a.timestamp || 0;
-                        const timeB = b.timestamp || 0;
-                        return timeB - timeA;
-                    });
+                    // 注意：Firestore 的 timestamp 是 Timestamp 物件，直接相減會得到 NaN，
+                    // 需先轉成毫秒數再比較，否則人數多時排序會失效。
+                    responses.sort((a, b) => getResponseTimeMs(b.timestamp) - getResponseTimeMs(a.timestamp));
                 }
 
                 // Apply starred filter
@@ -6294,6 +6339,8 @@ appId: &quot;...&quot;"></textarea>
                 }
 
                 responses.forEach((student, index) => {
+                    // 單一學生資料異常時只略過該筆，不可中斷整批卡片渲染
+                    try {
                     const card = document.createElement('div');
                     card.className = 'student-response-item';
 
@@ -6331,6 +6378,9 @@ appId: &quot;...&quot;"></textarea>
                                 showMagnifiedDrawing(fullImageUrl);
                             });
                         }
+                    }
+                    } catch (e) {
+                        console.warn('渲染單筆學生回應失敗，已略過:', student && student.name, e);
                     }
                 });
 
@@ -8164,6 +8214,36 @@ appId: &quot;...&quot;"></textarea>
             ctx.drawImage(drawingCanvas, 0, 0);
         }
 
+        /**
+         * 將繪圖結果轉成適合上傳 Firestore 的壓縮 JPEG dataURL。
+         * Firestore 單一文件上限約 1MB，未壓縮的 PNG 在大畫布或高解析度裝置上
+         * 很容易超過限制，造成學生繪圖送出失敗、教師端看不到作品。
+         * 逐步降低尺寸與品質，確保字串長度落在安全範圍內。
+         */
+        function getDrawingSubmitDataUrl() {
+            const MAX_DIM = 1024;
+            const MAX_LENGTH = 900000; // 預留安全空間 (base64 長度約等於位元組數)
+            const srcW = canvas.width || 1;
+            const srcH = canvas.height || 1;
+            let scale = Math.min(1, MAX_DIM / Math.max(srcW, srcH));
+            let quality = 0.8;
+            const off = document.createElement('canvas');
+            const octx = off.getContext('2d');
+            let dataUrl = '';
+            for (let attempt = 0; attempt < 5; attempt++) {
+                off.width = Math.max(1, Math.round(srcW * scale));
+                off.height = Math.max(1, Math.round(srcH * scale));
+                octx.fillStyle = '#ffffff'; // JPEG 不支援透明，先鋪白底
+                octx.fillRect(0, 0, off.width, off.height);
+                octx.drawImage(canvas, 0, 0, off.width, off.height);
+                dataUrl = off.toDataURL('image/jpeg', quality);
+                if (dataUrl.length <= MAX_LENGTH) return dataUrl;
+                quality = Math.max(0.4, quality - 0.15);
+                scale *= 0.8;
+            }
+            return dataUrl;
+        }
+
         function draw(e) {
             if (!isDrawing) return;
             e.preventDefault();
@@ -8926,8 +9006,55 @@ appId: &quot;...&quot;"></textarea>
                     }
                 });
                 
-                localStorage.setItem(historyKey, JSON.stringify(history));
+                saveClassroomHistorySafely(historyKey, history);
             }
+        }
+
+        /**
+         * 將互動紀錄中的繪圖 base64 圖片替換為文字佔位符，回傳是否有移除任何圖片。
+         */
+        function stripDrawingDataFromInteraction(interaction) {
+            let stripped = false;
+            if (interaction && interaction.responses) {
+                Object.keys(interaction.responses).forEach(name => {
+                    const r = interaction.responses[name];
+                    if (r && typeof r.answer === 'string' && r.answer.startsWith('data:image')) {
+                        r.answer = '【繪圖作品：因瀏覽器儲存空間限制，未保存於歷程】';
+                        stripped = true;
+                    }
+                });
+            }
+            return stripped;
+        }
+
+        /**
+         * 安全地將課程歷程寫入 localStorage。
+         * 學生人數多、又有繪圖作品 (base64 圖片) 時，歷程很容易超過瀏覽器
+         * localStorage 約 5MB 的配額而拋出 QuotaExceededError。
+         * 這裡改為：先嘗試完整保存，失敗時由最舊的互動開始移除繪圖圖片資料後重試，
+         * 確保寫入失敗絕不影響教師端即時畫面 (即時畫面資料來自 Firestore，不受影響)。
+         */
+        function saveClassroomHistorySafely(historyKey, history) {
+            try {
+                localStorage.setItem(historyKey, JSON.stringify(history));
+                return true;
+            } catch (e) {
+                // 空間不足，進入降級保存流程
+            }
+
+            const interactions = history.filter(h => h.type === 'interaction');
+            for (let i = 0; i < interactions.length; i++) {
+                if (!stripDrawingDataFromInteraction(interactions[i])) continue;
+                try {
+                    localStorage.setItem(historyKey, JSON.stringify(history));
+                    console.warn('課程歷程超過瀏覽器儲存空間，已移除部分繪圖圖片後保存。');
+                    return true;
+                } catch (e) {
+                    // 仍然不足，繼續移除更多互動的圖片
+                }
+            }
+            console.warn('課程歷程超過瀏覽器儲存空間，本次作答未寫入歷程（教師端即時畫面不受影響）。');
+            return false;
         }
 
         /**
@@ -10721,7 +10848,8 @@ appId: &quot;...&quot;"></textarea>
                     showMessage('老師已暫停回覆，無法送出答案。', 'error');
                     return;
                 }
-                const dataUrl = canvas.toDataURL('image/png');
+                drawCombinedCanvas(); // 確保送出的是最新合成結果 (背景 + 上傳圖 + 筆跡)
+                const dataUrl = getDrawingSubmitDataUrl();
                 await submitAnswer(dataUrl);
                 e.currentTarget.disabled = true;
                 e.currentTarget.classList.replace('btn-primary', 'btn-gray');
@@ -17012,7 +17140,10 @@ const PresentationModule = {
     document.body.classList.remove("ppt-fs","ppt-maxed");
     document.removeEventListener("keydown", this._onKey);
     if(this._onStuResize){ window.removeEventListener("resize", this._onStuResize); this._onStuResize=null; }
+    if(this._onStuVis){ document.removeEventListener("visibilitychange", this._onStuVis); this._onStuVis=null; }
+    if(this._onTeachResize){ window.removeEventListener("resize", this._onTeachResize); this._onTeachResize=null; }
     if(this._laserT){ clearTimeout(this._laserT); this._laserT=null; }
+    if(this._relistenT){ clearTimeout(this._relistenT); this._relistenT=null; }
   },
 
   curPage(){ return this.pages.find(p=>p.id===this.session?.currentPageId)||this.pages[0]||null; },
@@ -17175,11 +17306,14 @@ const PresentationModule = {
       $("ppt-laser").style.display="none";
       FS.updateDoc(this.sessRef(),{laser:{on:false}}).catch(()=>{});
     });
-    window.addEventListener("resize",()=>{ this.sizeAnnot(); this.renderAnnot(); });
+    this._onTeachResize=()=>{ this.sizeAnnot(); this.renderAnnot(); };
+    window.addEventListener("resize", this._onTeachResize);
   },
 
   toggleSync(){
-    const on=this.session?.broadcasting!==false;
+    // session 尚未載入時 (this.session 為 null) 切換會誤判狀態，先擋下
+    if(!this.session){ UI.toast("與雲端連線中，請稍候再試","err"); return; }
+    const on=this.session.broadcasting!==false;
     FS.updateDoc(this.sessRef(),{broadcasting:!on}).catch(()=>{});
     UI.toast(!on?"📡 開始同步！學生畫面開始跟隨":"⏸ 已停止同步，學生停留在目前畫面","info");
   },
@@ -17262,20 +17396,36 @@ const PresentationModule = {
   },
 
   listen(isTeacher){
+    // 先停掉舊監聽（重建時避免重複訂閱）
+    if(this._stopListen) this._stopListen();
+    // 監聽出錯（權限/連線異常）時 Firestore 會直接終止該監聽，
+    // 若不重建，這位使用者從此收不到任何更新（學生端表現為「沒有同步」）。
+    const onErr=err=>{
+      console.warn("[ppt] snapshot 監聽中斷，1.5 秒後自動重建:", err);
+      if(this._relistenT) return;
+      this._relistenT=setTimeout(()=>{
+        this._relistenT=null;
+        if(State.currentMode==="presentation") this.listen(isTeacher);
+      },1500);
+    };
     const u1=FS.onSnapshot(this.sessRef(), s=>{
       this.session=s.exists()?s.data():null;
       if(isTeacher){ this.renderStage(); this.renderThumbs(); this.renderSyncBtn(); }
       else{ this.renderStudent(); this.renderStudentLaser(); }
-    });
+    }, onErr);
     const u2=FS.onSnapshot(this.pageCol(), s=>{
       this.pages=s.docs.map(d=>({id:d.id,...d.data()}));
       if(isTeacher){ this.renderThumbs(); this.renderStage(); } else this.renderStudent();
-    });
+    }, onErr);
     const u3=FS.onSnapshot(this.subCol(), s=>{
       this.submissions=s.docs.map(d=>({id:d.id,...d.data()}));
       if(isTeacher) this.renderSubs(); else this.renderStudentSent();
+    }, onErr);
+    this._stopListen=()=>{ [u1,u2,u3].forEach(u=>{ try{u();}catch(e){} }); this._stopListen=null; };
+    State.moduleUnsubs.push(()=>{
+      if(this._stopListen) this._stopListen();
+      if(this._relistenT){ clearTimeout(this._relistenT); this._relistenT=null; }
     });
-    State.moduleUnsubs.push(u1,u2,u3);
     if(isTeacher) setTimeout(()=>this.sizeAnnot(),100);
   },
 
@@ -17532,19 +17682,29 @@ const PresentationModule = {
     if(!it){ el.innerHTML=`<p class="hint">本頁未設定互動。<br>提交總數（其他頁）：${this.submissions.length}</p>`; return; }
     let html=`<div style="font-weight:800;font-size:13px;margin-bottom:8px">${esc(it.question||"")}<br><span class="badge badge-blue">${subs.length} 則提交</span></div>`;
     if(this.itType(it)==="choice"){
+      // 直條圖：每個選項一根直條，直條由「作答學生名牌」由下往上堆疊而成，
+      // 高度即人數，同時呈現每位學生選了哪個答案。
       const n=this.chCount(it);
-      const counts=Array.from({length:n},(_,i)=>subs.filter(s=>s.value===i).length);
-      const max=Math.max(1,...counts);
-      html+=counts.map((cnt,i)=>`
-        <div class="bar-row" style="margin-bottom:4px"><div class="bl" style="flex-basis:24px">${this.chLabel(it,i)}${it.answer===i?"✅":""}</div>
-        <div class="bt" style="height:20px"><div class="bf" style="width:${cnt/max*100}%;background:linear-gradient(90deg,var(--ppt-a),var(--ppt-b))"></div></div>
-        <div class="bn num" style="flex-basis:26px">${cnt}</div></div>
-        ${it.options?.[i]?`<div style="font-size:11.5px;color:var(--ink2);margin:0 0 5px 30px">${esc(it.options[i])}</div>`:""}`).join("");
+      const CH_COLORS=["#E21B3C","#1368CE","#D89E00","#26890C"];
+      const groups=Array.from({length:n},(_,i)=>subs.filter(s=>s.value===i)
+        .sort((a,b)=>((a.ts?.seconds||0)-(b.ts?.seconds||0))));
+      html+=`<div style="display:flex;gap:6px;align-items:flex-end;margin:6px 0 0;min-height:70px">`+
+        groups.map((g,i)=>{
+          const isAns=it.answer===i;
+          return `<div style="flex:1;min-width:0;display:flex;flex-direction:column-reverse;gap:3px;padding:5px 3px 4px;border-radius:8px 8px 0 0;background:${CH_COLORS[i%4]}22;${isAns?`box-shadow:inset 0 0 0 2px ${CH_COLORS[i%4]};`:""}">
+            ${g.map(s=>`<div title="${esc(s.name)}" style="background:${CH_COLORS[i%4]};color:#fff;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 4px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(s.name)}</div>`).join("")}
+          </div>`;
+        }).join("")+`</div>`;
+      html+=`<div style="display:flex;gap:6px">`+
+        groups.map((g,i)=>`
+        <div style="flex:1;min-width:0;text-align:center;font-weight:900;font-size:13px;border-top:3px solid ${CH_COLORS[i%4]};padding-top:3px">
+          ${this.chLabel(it,i)}${it.answer===i?"✅":""}
+          <span class="num" style="display:block;font-size:11px;color:var(--ink2)">${g.length} 人</span>
+        </div>`).join("")+`</div>`;
       if(it.answer!=null){
         const ok=subs.filter(s=>s.value===it.answer).length;
-        html+=`<div class="badge badge-green" style="margin-top:6px">答對 ${ok} / ${subs.length}</div>`;
+        html+=`<div class="badge badge-green" style="margin-top:8px">答對 ${ok} / ${subs.length}</div>`;
       }
-      html+=subs.map(s=>`<div class="resp-item" style="padding:5px 9px;font-size:12.5px"><span class="nm">${esc(s.name)}</span><span class="val">${this.chLabel(it,s.value)} ${it.answer!=null?(s.value===it.answer?"✅":"❌"):""}</span></div>`).join("");
     }else if(this.itType(it)==="text"){
       html+=subs.map(s=>`<div class="resp-item" style="padding:6px 9px;font-size:13px">
         <input type="checkbox" class="ppt-cmp-ck" data-sid="${s.id}" ${this._cmpSel?.has(s.id)?"checked":""} title="勾選以比較">
@@ -17722,6 +17882,11 @@ const PresentationModule = {
     // renderStudentAnnot 內已負責同步重新定位手繪覆蓋層
     this._onStuResize=()=>this.renderStudentAnnot();
     window.addEventListener("resize", this._onStuResize);
+    // 裝置休眠/切到背景再回前景時，強制依最新資料重繪一次，避免畫面停在舊頁面
+    this._onStuVis=()=>{
+      if(document.visibilityState==="visible"){ this.renderStudent(); this.renderStudentLaser(); }
+    };
+    document.addEventListener("visibilitychange", this._onStuVis);
     // 學生端全螢幕：隱藏頂部列與邊距，讓投影內容最大化（依比例完整呈現、不裁切）
     $("ppt-stu-fs").onclick=()=>{
       document.body.classList.toggle("ppt-fs");
@@ -17775,6 +17940,8 @@ const PresentationModule = {
     if(!p) return;
     const mine=this.submissions.find(s=>s.pageId===p.id&&s.name===State.name);
     if(mine&&!this._stuSent){ this._stuSent=true; this.renderStudentInteract(p); }
+    // 老師按「重置提交」刪除雲端提交後，解除鎖定讓學生可重新作答
+    else if(!mine&&this._stuSent){ this._stuSent=false; this.renderStudentInteract(p); }
   },
 
   renderStudentInteract(p){
@@ -17914,7 +18081,8 @@ const PresentationModule = {
 
   async studentSubmit(p, value){
     try{
-      await FS.setDoc(FS.doc(this.subCol(), p.id+"_"+State.name),
+      // 姓名經 encodeURIComponent 處理，避免含 "/" 等字元組出非法文件路徑導致送出失敗
+      await FS.setDoc(FS.doc(this.subCol(), p.id+"_"+encodeURIComponent(State.name)),
         {pageId:p.id, name:State.name, value, ts:FS.serverTimestamp()});
       this._stuSent=true;
       this.renderStudentInteract(p);
